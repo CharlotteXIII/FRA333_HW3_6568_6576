@@ -1,7 +1,7 @@
    #!/usr/bin/python3
 import numpy as np
 import math
-q = (0.0,0.0,0.0)
+
 def FKHW3(q):
     [q1,q2,q3] = q
     d_1 = 0.0892
@@ -73,8 +73,6 @@ def FKHW3(q):
     R_e = R[:,:,3]
     p_e = P[:,3]
     
-    print(p_e)
-
+    
     return R,P,R_e,p_e
 
-FKHW3(q)
