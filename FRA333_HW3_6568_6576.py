@@ -95,7 +95,7 @@ def computeEffortHW3(q:list[float], w:list[float])->list[float]:
 
 
 # q = [0.0,0.0,0.0]            
-q = [0.0,-pi/2,-0.2]          #<--- INSERT Q HERE !
+q = [0.0,-pi/2,-0.2]          #<--- create singularity
 w = [10, 0, 0, 0, 0, 0]          #<---- Inset Value Here !
 endEffectorJacobianHW3(q)
 checkSingularityHW3(q)

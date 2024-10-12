@@ -12,6 +12,7 @@ import roboticstoolbox as rtb
 from spatialmath import SE3
 from HW3_utils import FKHW3 
 
+# กำหนดตัวแปรที่จะใช้งาน
 d_1 = 0.0892
 a_2 = -0.425
 a_3 = -0.39243
@@ -21,7 +22,7 @@ d_6 = 0.082
 c_minus_90 = 0
 s_minus_90 = -1
 
-# Find End effector and Create rbot
+# หา End effector และสร้าง rbot
 
 End_P = np.array([a_3 + (-d_6), -d_5 , d_4])
 End_R = np.array([[c_minus_90,      0,  s_minus_90],
@@ -50,7 +51,7 @@ rbot = rtb.DHRobot(
 def TestJacobianHW3(q:list[float])->list[float]:
     print('################# ข้อ 1 #################')
 
-    J_e = rbot.jacob0(q)
+    J_e = rbot.jacob0(q) #คำนวนหา jacobian matrix โดยใช้ jacob0
     print("This RRR robot Jacobian is: \n",J_e) 
 
     print('\n')
@@ -63,19 +64,20 @@ def TestJacobianHW3(q:list[float])->list[float]:
 def TestSingularityHW3(q:list[float])->bool:
     print('################# ข้อ 2 #################')
 
+    #กำหนดตัวแปร
     epsilon = 0.001
-    J_e = rbot.jacob0(q)
+    J_e = rbot.jacob0(q)  
 
-    # Use Only Linear Velocity
+    # ใช้แค่ค่าของ Linear Velocity จึงทำการนำส่วนเชิงเส้นของ Jacobian matrix ออกมา โดยใช้ [:3, :]
     J_e_linear = J_e[:3, :]
 
-    # Find Det of Linear Velocity
+    # หาค่า det ของ J_e_linear โดยใช้ numpy
     det_J_linear = np.linalg.det(J_e_linear)
 
-    # absolute
+    # สร้างตัวแปร Lเพื่อเก็บค่า absolute ของ det_J_linear
     L = abs(det_J_linear)
 
-    # Check Singularity or not
+    # ตรวจสอบว่าหุ่นเข้าใกล้ค่า Singularity ไหม ผ่านการเปรียบเทียบกับ epsilon
     if abs(L) < epsilon:
         print(" Flag = 1 is singularity.")
         print('\n')
@@ -90,7 +92,11 @@ def TestSingularityHW3(q:list[float])->bool:
 #=============================================<ตรวจคำตอบข้อ 3>======================================================#
 def TestcomputeEffortHW3(q:list[float], w:list[float])->list[float]:
     print('################# ข้อ 3 #################')
+    
+    #กำหนดตัวแปร
     J_e = rbot.jacob0(q)
+
+    #ใช้ numpy ในการหาค่า tau โดยนำ J_e.T dot w
     # tau = rbot.pay(w, q, J_e)
     tau = np.dot(J_e.T, w)
     print('tau is \n', tau)
@@ -99,7 +105,7 @@ def TestcomputeEffortHW3(q:list[float], w:list[float])->list[float]:
     
 #==============================================================================================================#
 # q = [0.0,0.0,0.0]            
-q = [0.0,-pi/2,-0.2]             #<---- Inset Value Here !
+q = [0.0,-pi/2,-0.2]             #<---- create singularity
 w = [10, 0, 0, 0, 0, 0]          #<---- Inset Value Here !
 TestJacobianHW3(q)
 TestSingularityHW3(q)
