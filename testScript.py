@@ -47,7 +47,7 @@ rbot = rtb.DHRobot(
 # print(rbot)
 
 #=============================================<ตรวจคำตอบข้อ 1>======================================================#
-def endEffectorJacobianHW3(q:list[float])->list[float]:
+def TestJacobianHW3(q:list[float])->list[float]:
     print('################# ข้อ 1 #################')
 
     J_e = rbot.jacob0(q)
@@ -60,7 +60,7 @@ def endEffectorJacobianHW3(q:list[float])->list[float]:
 
 
 #=============================================<ตรวจคำตอบข้อ 2>======================================================#
-def checkSingularityHW3(q:list[float])->bool:
+def TestSingularityHW3(q:list[float])->bool:
     print('################# ข้อ 2 #################')
 
     epsilon = 0.001
@@ -88,7 +88,7 @@ def checkSingularityHW3(q:list[float])->bool:
 
 
 #=============================================<ตรวจคำตอบข้อ 3>======================================================#
-def computeEffortHW3(q:list[float], w:list[float])->list[float]:
+def TestcomputeEffortHW3(q:list[float], w:list[float])->list[float]:
     print('################# ข้อ 3 #################')
     J_e = rbot.jacob0(q)
     # tau = rbot.pay(w, q, J_e)
@@ -98,12 +98,12 @@ def computeEffortHW3(q:list[float], w:list[float])->list[float]:
     return tau
     
 #==============================================================================================================#
-
-q = [0.0,0.0,0.0]             #<---- Inset Value Here !
-w = [10, 0, 0, 0, 0, 0]       #<---- Inset Value Here !
-endEffectorJacobianHW3(q)
-checkSingularityHW3(q)
-computeEffortHW3(q,w)
+# q = [0.0,0.0,0.0]            
+q = [0.0,-pi/2,-0.2]             #<---- Inset Value Here !
+w = [10, 0, 0, 0, 0, 0]          #<---- Inset Value Here !
+TestJacobianHW3(q)
+TestSingularityHW3(q)
+TestcomputeEffortHW3(q,w)
 
 
 
