@@ -46,7 +46,7 @@ rbot = rtb.DHRobot(
 # Check rbot
 # print(rbot)
 
-#=============================================<คำตอบข้อ 1>======================================================#
+#=============================================<ตรวจคำตอบข้อ 1>======================================================#
 def endEffectorJacobianHW3(q:list[float])->list[float]:
     print('################# ข้อ 1 #################')
 
@@ -59,7 +59,7 @@ def endEffectorJacobianHW3(q:list[float])->list[float]:
 #==============================================================================================================#
 
 
-#=============================================<คำตอบข้อ 2>======================================================#
+#=============================================<ตรวจคำตอบข้อ 2>======================================================#
 def checkSingularityHW3(q:list[float])->bool:
     print('################# ข้อ 2 #################')
 
@@ -77,46 +77,33 @@ def checkSingularityHW3(q:list[float])->bool:
 
     # Check Singularity or not
     if abs(L) < epsilon:
-        print("The robot is in or near a singular config.")
+        print(" Flag = 1 is singularity.")
         print('\n')
+        return 1
     else:
-        print("The robot is in a non-singular config.")
+        print(" Flag = 0 is not singularity.")
         print('\n')
-
+        return 0
 #==============================================================================================================#
 
 
-#=============================================<คำตอบข้อ 3>======================================================#
+#=============================================<ตรวจคำตอบข้อ 3>======================================================#
 def computeEffortHW3(q:list[float], w:list[float])->list[float]:
     print('################# ข้อ 3 #################')
-    # J_e = rbot.jacob0(q)
+    J_e = rbot.jacob0(q)
     # tau = rbot.pay(w, q, J_e)
-    # print('tau is \n', tau)
-    # return tau
+    tau = np.dot(J_e.T, w)
+    print('tau is \n', tau)
     print('\n')
-    pass
+    return tau
+    
 #==============================================================================================================#
 
-q = [0.0,0.0,0.0]
+q = [0.0,0.0,0.0]             #<---- Inset Value Here !
+w = [10, 0, 0, 0, 0, 0]       #<---- Inset Value Here !
 endEffectorJacobianHW3(q)
 checkSingularityHW3(q)
-# computeEffortHW3(q)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+computeEffortHW3(q,w)
 
 
 
