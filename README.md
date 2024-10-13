@@ -211,6 +211,7 @@ def TestSingularityHW3(q:list[float])->bool:
 τ = Transpose(J) ⋅w
 ```
 เริ่มด้วยการนำ J_e ไป Transpose และคูณกับ w โดยใช้ np.dot() ของ Numpy ซึ่งจะทำ Transpose และคูณกับ w ให้เลย
+
 โดยที่ w เป็น input vector
 ```
 def TestcomputeEffortHW3(q:list[float], w:list[float])->list[float]:
