@@ -125,7 +125,7 @@ w = [10, 0, 0, 0, 0, 0]          #<---- Inset w Here !
 # checkSingularityHW3(q)
 # computeEffortHW3(q,w)
 
-# คำนวนหา Jacobian แค่ครั้งเดียวประกาศให้ใช้ตัวแปรได้ทุกฟังก์ชัน เพื่อลดการเกิด duplicate function calls จาก J_e = endEffectorJacobianHW3(q) ใน code
+# คำนวณหา Jacobian แค่ครั้งเดียวประกาศให้ใช้ตัวแปร J_e ได้ทุกฟังก์ชัน เพื่อลดการเกิด duplicate function calls จาก J_e = endEffectorJacobianHW3(q) ใน code
 J_e = endEffectorJacobianHW3(q)
 checkSingularityHW3(q)
 computeEffortHW3(q, w)

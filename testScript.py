@@ -52,7 +52,7 @@ rbot = rtb.DHRobot(
 def TestJacobianHW3(q:list[float])->list[float]:
     print('################# ตรวจคำตอบข้อ 1 #################')
 
-    J_e = rbot.jacob0(q) #คำนวนหา jacobian matrix โดยใช้ jacob0
+    J_e = rbot.jacob0(q) #คำนวณหา jacobian matrix โดยใช้ jacob0
     print("This RRR robot Jacobian is: \n",J_e) 
 
     print('\n')
