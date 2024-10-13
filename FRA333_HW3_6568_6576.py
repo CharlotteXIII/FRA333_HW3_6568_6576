@@ -13,6 +13,7 @@ import roboticstoolbox as rtb
 from spatialmath import SE3
 from HW3_utils import FKHW3 
 
+# ประกาศตัวแปร
 d_1 = 0.0892
 a_2 = -0.425
 a_3 = -0.39243
@@ -22,18 +23,19 @@ d_6 = 0.082
 c_minus_90 = 0
 s_minus_90 = -1
 
-# Find End effector and Create rbot
-
-End_P = np.array([a_3 + (-d_6), -d_5 , d_4])
-End_R = np.array([[c_minus_90,      0,  s_minus_90],
+# หา End effector และสร้าง rbot
+# คำนวณตำแหน่งและการหมุนของ end-effector
+End_P = np.array([a_3 + (-d_6), -d_5 , d_4]) # ตำแหน่งของ end-effector
+End_R = np.array([[c_minus_90,      0,  s_minus_90], # เมทริกซ์การหมุน
                   [0,               1,           0],
                   [-(s_minus_90),   0,  c_minus_90]])
-End = np.eye(4)  
-End[0:3, 3] = End_P
-End[0:3, 0:3] = End_R
-End_EF = SE3(End)
+End = np.eye(4)  # สร้างเมทริกซ์ขนาด 4x4
+End[0:3, 3] = End_P # กำหนดส่วนของตำแหน่งในเมทริกซ์
+End[0:3, 0:3] = End_R # กำหนดส่วนของการหมุนในเมทริกซ์
+End_EF = SE3(End) # กำหนด end effector ในรูปแบบ SE3 (การแปลงHomogeneous)
 # print('End_EF is \n', End_EF)
 
+# กำหนดโมเดลหุ่นยนต์โดยใช้ DH Parameter
 rbot = rtb.DHRobot(
     [
         rtb.RevoluteMDH(a= 0, d= d_1, offset=pi),
@@ -45,58 +47,85 @@ rbot = rtb.DHRobot(
 )
 
 #===========================================<คำตอบข้อ 1>====================================================#
+# ฟังก์ชันสำหรับคำนวณเมทริกซ์ Jacobian ของ end-effector
 def endEffectorJacobianHW3(q:list[float])->list[float]:
+    print('################# คำตอบข้อ 1 #################')
+
+
+    # คำนวณ forward kinematics จากฟังก์ชัน FKHW3
     R, P, R_e, p_e = FKHW3(q)
+    # สร้างเมทริกซ์ Jacobian ขนาด 6xn
     J_e = np.zeros((6, len(q)))
 
-    for i in range(len(q)):
+    #หา jacobian ในแต่ละ joints
+    for Joint in range(len(q)):
 
-        Pn = p_e - P[:,i]
-        Z_i = R[:,2,i] 
+        Pose = p_e - P[:,Joint] 
+        Z_i = R[:,2,Joint] 
 
-        J_e[:3,i] = (np.cross(Z_i, Pn)) # Linear Velo
-        J_e[3:, i] = Z_i                # Angular Velo
+        J_e[:3,Joint] = (np.cross(Z_i, Pose)) # Linear Velocity
+        J_e[3:, Joint] = Z_i                # Angular Velocity
 
-    print("This RRR robot Jacobian(manual calculation) is: \n",J_e)
+    # แสดงผลเมทริกซ์ Jacobian ที่คำนวณได้
+    print("This RRR robot Jacobian(manual calculation) is: \n", J_e)
+    print('\n')
     return J_e
 
 
 #===========================================<คำตอบข้อ 2>====================================================#
+# ฟังก์ชันสำหรับตรวจสอบว่าหุ่นยนต์อยู่ในสภาวะ Singular หรือไม่
 def checkSingularityHW3(q:list[float])->bool:
-    epsilon = 0.001
-    threshold = 0.01
 
-    # Calculate the Jacobian matrix using the previous function
-    J_e = endEffectorJacobianHW3(q)
+    # ประกาศตัวแปร
+    epsilon = 0.001 
+    difference = 0.01
 
-    # Extract the 3x3 linear part of the Jacobian
+    # คำนวณ Jacobian แบบ manual
+    # J_e = endEffectorJacobianHW3(q)
+
+    # แยกส่วนเมทริกซ์ 3x3 ของความเร็วเชิงเส้นใน Jacobian
     J_linear_manual = J_e[:3, :]
 
-    # Compute the determinant of the linear Jacobian
+    # คำนวณ determinant ของเมทริกซ์ Jacobian เชิงเส้น
     det_J_linear_manual = np.linalg.det(J_linear_manual)
 
-    # Check if the determinant is close to zero (singular configuration)
-    if abs(epsilon - abs(det_J_linear_manual)) < threshold:
+    # ตรวจสอบว่า determinant ใกล้ศูนย์หรือไม่ (เพื่อบอกถึงสภาวะ Singular)
+    if abs(epsilon - abs(det_J_linear_manual)) < difference:
+        print('################# คำตอบข้อ 2 #################')
         print("Flag = 1: Singularity detected.")
+        print('\n')
         return True  # Singular
     else:
+        print('################# คำตอบข้อ 2 #################')
         print("Flag = 0: Not in singularity.")
+        print('\n')
         return False  # Non-singular
     
 #===========================================<คำตอบข้อ 3>====================================================#
+# ฟังก์ชันสำหรับคำนวณแรงบิด (Torque) โดยใช้ Jacobian แบบ manual
 def computeEffortHW3(q:list[float], w:list[float])->list[float]:
-    J_e = endEffectorJacobianHW3(q)
-    J_e_T = J_e.transpose()
+    print('################# คำตอบข้อ 3 #################')
 
+    # คำนวณเมทริกซ์ Jacobian โดยใช้แบบ manual
+    # J_e = endEffectorJacobianHW3(q)
+    # คำนวณTranspose ของ เมทริกซ์ Jacobian
+    J_e_T = J_e.transpose()
+    # คำนวณแรงบิด
     tau = J_e_T @ w
 
     print('tau is \n', tau)
+    print('\n')
     return tau
 
 
-# q = [0.0,0.0,0.0]            
-q = [0.0,-pi/2,-0.2]          #<--- create singularity
-w = [10, 0, 0, 0, 0, 0]          #<---- Inset Value Here !
-endEffectorJacobianHW3(q)
+q = [0.0,0.0,0.0]                #<--- INSERT Q HERE !
+# q = [0.0,-pi/2,-0.2]           # ค่าที่ทำให้เกิด Singularity
+w = [10, 0, 0, 0, 0, 0]          #<---- Inset w Here !
+# endEffectorJacobianHW3(q)
+# checkSingularityHW3(q)
+# computeEffortHW3(q,w)
+
+# คำนวนหา Jacobian แค่ครั้งเดียวประกาศให้ใช้ตัวแปรได้ทุกฟังก์ชัน เพื่อลดการเกิด duplicate function calls จาก J_e = endEffectorJacobianHW3(q) ใน code
+J_e = endEffectorJacobianHW3(q)
 checkSingularityHW3(q)
-computeEffortHW3(q,w)
+computeEffortHW3(q, w)

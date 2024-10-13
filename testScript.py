@@ -23,17 +23,18 @@ c_minus_90 = 0
 s_minus_90 = -1
 
 # หา End effector และสร้าง rbot
-
-End_P = np.array([a_3 + (-d_6), -d_5 , d_4])
-End_R = np.array([[c_minus_90,      0,  s_minus_90],
+# คำนวณตำแหน่งและการหมุนของ end-effector
+End_P = np.array([a_3 + (-d_6), -d_5 , d_4]) # ตำแหน่งของ end-effector
+End_R = np.array([[c_minus_90,      0,  s_minus_90], # เมทริกซ์การหมุน
                   [0,               1,           0],
                   [-(s_minus_90),   0,  c_minus_90]])
-End = np.eye(4)  
-End[0:3, 3] = End_P
-End[0:3, 0:3] = End_R
-End_EF = SE3(End)
+End = np.eye(4)  # สร้างเมทริกซ์ขนาด 4x4
+End[0:3, 3] = End_P # กำหนดส่วนของตำแหน่งในเมทริกซ์
+End[0:3, 0:3] = End_R # กำหนดส่วนของการหมุนในเมทริกซ์
+End_EF = SE3(End) # กำหนด end effector ในรูปแบบ SE3 (การแปลงHomogeneous)
 # print('End_EF is \n', End_EF)
 
+# กำหนดโมเดลหุ่นยนต์โดยใช้ DH Parameter
 rbot = rtb.DHRobot(
     [
         rtb.RevoluteMDH(a= 0, d= d_1, offset=pi),
@@ -49,7 +50,7 @@ rbot = rtb.DHRobot(
 
 #=============================================<ตรวจคำตอบข้อ 1>======================================================#
 def TestJacobianHW3(q:list[float])->list[float]:
-    print('################# ข้อ 1 #################')
+    print('################# ตรวจคำตอบข้อ 1 #################')
 
     J_e = rbot.jacob0(q) #คำนวนหา jacobian matrix โดยใช้ jacob0
     print("This RRR robot Jacobian is: \n",J_e) 
@@ -62,7 +63,6 @@ def TestJacobianHW3(q:list[float])->list[float]:
 
 #=============================================<ตรวจคำตอบข้อ 2>======================================================#
 def TestSingularityHW3(q:list[float])->bool:
-    print('################# ข้อ 2 #################')
 
     #กำหนดตัวแปร
     epsilon = 0.001
@@ -79,10 +79,12 @@ def TestSingularityHW3(q:list[float])->bool:
 
     # ตรวจสอบว่าหุ่นเข้าใกล้ค่า Singularity ไหม ผ่านการเปรียบเทียบกับ epsilon
     if abs(L) < epsilon:
+        print('################# ตรวจคำตอบข้อ 2 #################')
         print(" Flag = 1 is singularity.")
         print('\n')
         return 1
     else:
+        print('################# ตรวจคำตอบข้อ 2 #################')
         print(" Flag = 0 is not singularity.")
         print('\n')
         return 0
@@ -91,11 +93,12 @@ def TestSingularityHW3(q:list[float])->bool:
 
 #=============================================<ตรวจคำตอบข้อ 3>======================================================#
 def TestcomputeEffortHW3(q:list[float], w:list[float])->list[float]:
-    print('################# ข้อ 3 #################')
+    print('################# ตรวจคำตอบข้อ 3 #################')
     
     #กำหนดตัวแปร
     J_e = rbot.jacob0(q)
 
+    # คำนวณแรงบิด
     #ใช้ numpy ในการหาค่า tau โดยนำ J_e.T dot w
     # tau = rbot.pay(w, q, J_e)
     tau = np.dot(J_e.T, w)
@@ -104,9 +107,9 @@ def TestcomputeEffortHW3(q:list[float], w:list[float])->list[float]:
     return tau
     
 #==============================================================================================================#
-# q = [0.0,0.0,0.0]            
-q = [0.0,-pi/2,-0.2]             #<---- create singularity
-w = [10, 0, 0, 0, 0, 0]          #<---- Inset Value Here !
+q = [0.0,0.0,0.0]                  #<--- INSERT Q HERE !
+# q = [0.0,-pi/2,-0.2]             # ค่าที่ทำให้เกิด Singularity
+w = [10, 0, 0, 0, 0, 0]            #<---- Inset w Here !
 TestJacobianHW3(q)
 TestSingularityHW3(q)
 TestcomputeEffortHW3(q,w)
