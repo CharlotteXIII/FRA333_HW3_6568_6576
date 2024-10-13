@@ -100,7 +100,7 @@ def TestcomputeEffortHW3(q:list[float], w:list[float])->list[float]:
 
     # คำนวณแรงบิด
     #ใช้ numpy ในการหาค่า tau โดยนำ J_e.T dot w
-    # tau = rbot.pay(w, q, J_e)
+
     tau = np.dot(J_e.T, w)
     print('tau is \n', tau)
     print('\n')
