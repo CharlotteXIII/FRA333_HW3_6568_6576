@@ -10,7 +10,7 @@
 #NOTE ระวังกด Run แล้วบัคแสดงออกมาไม่ครบ 6x6 matrix ให้กด Run ใหม่อีกรอบ
 ```
 
-# การตรวจคำตอบบนไฟล์ TestScript.py
+# การตรวจคำตอบบนไฟล์ testScript.py
 
 ## Table of Content
 
